@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center text-warning fw-bold mb-4">
+    <i class="bi bi-box-seam"></i> Gestión de Productos
+  </h2>
+
+  <!-- Botón agregar producto -->
+  <div class="text-end mb-3">
+    <a href="{{ url_for('agregar') }}" class="btn btn-success fw-semibold shadow-sm">
+      <i class="bi bi-plus-circle"></i> Agregar Producto
+    </a>
+  </div>
+
+  {% if productos %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm border rounded">
+      <thead class="table-dark text-center">
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        {% for p in productos %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td class="fw-semibold text-capitalize">{{ p.get('nombre', '—') }}</td>
+          <td>{{ p.get('categoria', '—') }}</td>
+          <td>${{ "%.2f"|format(p.get('precio', 0)) }}</td>
+          <td>{{ p.get('stock', 0) }}</td>
+          <td>
+            <a href="{{ url_for('editar', id=p['_id']) }}" class="btn btn-primary btn-sm me-1">
+              <i class="bi bi-pencil-square"></i> Editar
+            </a>
+            <a href="{{ url_for('eliminar', id=p['_id']) }}" class="btn btn-danger btn-sm eliminar-btn">
+              <i class="bi bi-trash3"></i> Eliminar
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="alert alert-warning text-center fw-semibold mt-4 shadow-sm">
+      😢 No hay productos registrados aún.
+    </div>
+  {% endif %}
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  // Confirmación antes de eliminar
+  document.querySelectorAll('.eliminar-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const url = this.getAttribute('href');
+      Swal.fire({
+        title: '¿Eliminar producto?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d'
+      }).then(result => {
+        if (result.isConfirmed) {
+          window.location.href = url;
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  table {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .table thead th {
+    background: #212529 !important;
+    color: #ffc107 !important;
+  }
+  .table td {
+    vertical-align: middle;
+  }
+  .btn {
+    border-radius: 8px;
+  }
+  .alert {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+</style>
+
+{% endblock %}

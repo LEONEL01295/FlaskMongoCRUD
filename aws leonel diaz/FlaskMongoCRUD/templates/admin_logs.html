@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center text-danger fw-bold mb-4">
+    <i class="bi bi-activity"></i> Historial de Actividades
+  </h2>
+
+
+  <form action="{{ url_for('eliminar_todos_los_logs') }}" method="POST"
+      onsubmit="return confirm('¿Seguro que deseas eliminar TODOS los logs? Esta acción no se puede deshacer.');">
+    <button class="btn btn-danger mb-3">
+        <i class="bi bi-trash-fill"></i> Eliminar TODOS los Logs
+    </button>
+</form>
+
+  <!-- Botón para volver -->
+  <div class="text-end mb-3">
+    <a href="{{ url_for('admin_ordenes') }}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left-circle"></i> Volver al Panel de Órdenes
+    </a>
+  </div>
+
+  {% if logs %}
+  <div class="table-responsive shadow-sm">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-dark text-center">
+        <tr>
+          <th>Fecha</th>
+          <th>Acción</th>
+          <th>Colección</th>
+          <th>Usuario</th>
+          <th>Detalles</th>
+          <th>Acciones</th>   <!-- NUEVA COLUMNA -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td>{{ log['fecha'] }}</td>
+
+          <td>
+            {% if 'eliminado' in log['accion'].lower() %}
+              <span class="badge bg-danger"><i class="bi bi-trash"></i> {{ log['accion'] }}</span>
+            {% elif 'agregado' in log['accion'].lower() or 'nuevo' in log['accion'].lower() %}
+              <span class="badge bg-success"><i class="bi bi-plus-circle"></i> {{ log['accion'] }}</span>
+            {% elif 'actualizado' in log['accion'].lower() or 'cambio' in log['accion'].lower() %}
+              <span class="badge bg-warning text-dark"><i class="bi bi-arrow-repeat"></i> {{ log['accion'] }}</span>
+            {% else %}
+              <span class="badge bg-primary"><i class="bi bi-info-circle"></i> {{ log['accion'] }}</span>
+            {% endif %}
+          </td>
+
+          <td>{{ log['coleccion'] }}</td>
+          <td>{{ log['usuario'] }}</td>
+
+          <td>
+            <pre class="text-start bg-light p-2 rounded" style="font-size: 0.8rem;">{{ log['datos'] | tojson(indent=2) }}</pre>
+          </td>
+
+          <!-- BOTÓN DE ELIMINAR -->
+          <td class="text-center">
+            <form action="{{ url_for('eliminar_log', id=log['_id']) }}" method="POST"
+                  onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
+              <button type="submit" class="btn btn-sm btn-danger">
+                <i class="bi bi-trash"></i> Eliminar
+              </button>
+            </form>
+            
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="alert alert-warning text-center fw-semibold">
+      ⚠️ No hay registros de actividad todavía.
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  table {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+</style>
+
+{% endblock %}

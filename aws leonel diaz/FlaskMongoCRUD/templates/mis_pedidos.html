@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-5">
+  <!-- Encabezado -->
+  <h2 class="text-center text-danger fw-bold mb-4">
+    <i class="bi bi-bag-check"></i> Mis Pedidos
+  </h2>
+
+  <!-- Mensaje superior -->
+  <div class="alert alert-light border shadow-sm text-center">
+    👋 Hola <strong>{{ pedidos[0]['cliente'] if pedidos else '' }}</strong>
+    ({{ telefono }}), estos son tus pedidos:
+  </div>
+
+  {% if pedidos %}
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle shadow-sm">
+      <thead class="table-dark text-center">
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Teléfono</th>
+          <th>Producto</th>
+          <th>Imagen</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Comentario extra</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        {% for pedido in pedidos %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ pedido['cliente'] }}</td>
+          <td>{{ pedido['telefono'] }}</td>
+          <td>{{ pedido['producto'] }}</td>
+          <td>
+            <img src="{{ url_for('static', filename=pedido['imagen'].replace('./', '')) }}" 
+                 alt="{{ pedido['producto'] }}" width="70" class="rounded shadow-sm">
+          </td>
+          <td>${{ pedido['precio'] }}.00</td>
+          <td>
+            {% if pedido['estado'] == "Pendiente" %}
+              <span class="badge bg-warning text-dark">
+                <i class="bi bi-hourglass-split"></i> Pendiente
+              </span>
+            {% else %}
+              <span class="badge bg-success">
+                <i class="bi bi-check-circle"></i> Entregado
+              </span>
+            {% endif %}
+          </td>
+          <td>{{ pedido['fecha'] }}</td>
+          <td>
+            <form onsubmit="guardarComentario(event, '{{ pedido['_id'] }}')">
+              <textarea name="comentario" class="form-control mb-2" rows="1" 
+                        placeholder="Agrega un comentario...">{{ pedido.get('comentario', '') }}</textarea>
+              <button type="submit" class="btn btn-primary btn-sm w-100">
+                💬 Guardar comentario
+              </button>
+              <div id="msg-{{ pedido['_id'] }}" class="small mt-1 text-success"></div>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="alert alert-warning text-center fw-semibold">
+      😢 No tienes pedidos registrados aún.
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  table {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  img {
+    object-fit: cover;
+    height: 70px;
+  }
+  .badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+</style>
+
+<!-- 🔥 Script funcional para guardar comentarios -->
+<script>
+function guardarComentario(event, id) {
+  event.preventDefault();
+
+  const form = event.target;
+  const comentario = form.comentario.value.trim();
+  const mensaje = document.getElementById(`msg-${id}`);
+
+  if (!comentario) {
+    mensaje.textContent = "⚠️ Escribe un comentario antes de guardar.";
+    mensaje.classList.replace("text-success", "text-danger");
+    return;
+  }
+
+  fetch(`/guardar_comentario/${id}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `comentario=${encodeURIComponent(comentario)}`
+  })
+  .then(response => response.text())
+  .then(texto => {
+    mensaje.textContent = texto;
+    mensaje.classList.replace("text-danger", "text-success");
+    setTimeout(() => mensaje.textContent = "", 3000);
+  })
+  .catch(() => {
+    mensaje.textContent = "❌ Error al guardar comentario.";
+    mensaje.classList.replace("text-success", "text-danger");
+  });
+}
+</script>
+
+{% endblock %}

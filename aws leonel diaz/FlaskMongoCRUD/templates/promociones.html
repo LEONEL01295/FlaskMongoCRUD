@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-white bg-success p-3 rounded">
+      <i class="bi bi-megaphone-fill"></i> Promociones
+    </h2>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+
+    <!-- 🐔 Miércoles de Pollo -->
+    <div class="col-md-5">
+      <div class="card border-0 shadow-sm h-100">
+        <img src="{{ url_for('static', filename='imagenes/promociones/oferta1.jpg') }}" class="card-img-top" alt="Miércoles de Pollo">
+        <div class="card-body text-center">
+          <h5 class="fw-bold text-success">🐔 Miércoles de Pollo</h5>
+          <p>¡Aprovecha el 20% de descuento en todos los pollos enteros los miércoles!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔥 Pollo Horneado -->
+    <div class="col-md-5">
+      <div class="card border-0 shadow-sm h-100">
+        <img src="{{ url_for('static', filename='imagenes/promociones/oferta2.jpg') }}" class="card-img-top" alt="Pollo Horneado">
+        <div class="card-body text-center">
+          <h5 class="fw-bold text-success">🔥 Pollo Horneado Delicioso</h5>
+          <p>Compra un pollo horneado y llévate una salsa gratis. ¡Promoción válida todo el mes!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🌮 Martes de 2x1 -->
+    <div class="col-md-5">
+      <div class="card border-0 shadow-sm h-100">
+        <img src="{{ url_for('static', filename='imagenes/promociones/ofer.jpg') }}" class="card-img-top" alt="Martes de 2x1">
+        <div class="card-body text-center">
+          <h5 class="fw-bold text-success">🌮 Martes de 2x1</h5>
+          <p>Disfruta el martes con nuestro combo 2x1 en tacos de pollo y refresco gratis.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🥤 Paquete Familiar -->
+    <div class="col-md-5">
+      <div class="card border-0 shadow-sm h-100">
+        <!-- ✅ Corrección aquí -->
+        <img src="{{ url_for('static', filename='imagenes/promociones/listo.jpg') }}" class="card-img-top" alt="Paquete Familiar">
+        <div class="card-body text-center">
+          <h5 class="fw-bold text-success">🥤 Paquete Familiar</h5>
+          <p>Paquete de 2 pollos + papas + refrescos a solo <strong>$300</strong>. ¡Fin de semana familiar!</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+  .card-img-top {
+    height: 240px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  .card {
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+</style>
+
+{% endblock %}
